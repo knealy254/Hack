@@ -20,7 +20,6 @@ foreach channel : log_on + log_off
     endif
 endforeach
 add_project_arguments('-DLOG_HANDLER_' + get_option('log_handler').to_upper() + '=1', language: 'c')
-add_project_arguments('-DENGINE_' + get_option('engine').to_upper() + '=1', language: 'c')
 
 if get_option('no_crlf')
     add_project_arguments('-DNO_CRLF', language: 'c')
@@ -51,26 +50,20 @@ emu_src = [
     'emu/float80.c',
 
 ]
-if get_option('engine') == 'jit'
-    gadgets = 'jit/gadgets-' + host_machine.cpu_family()
-    emu_src += [
-        'jit/jit.c',
-        'jit/gen.c',
-        'jit/helpers.c',
-        gadgets+'/entry.S',
-        gadgets+'/memory.S',
-        gadgets+'/control.S',
-        gadgets+'/math.S',
-        gadgets+'/bits.S',
-        gadgets+'/string.S',
-        gadgets+'/misc.S',
-        offsets,
-    ]
-else
-    emu_src += [
-        'emu/interp.c',
-    ]
-endif
+gadgets = 'jit/gadgets-' + host_machine.cpu_family()
+emu_src += [
+    'jit/jit.c',
+    'jit/gen.c',
+    'jit/helpers.c',
+    gadgets+'/entry.S',
+    gadgets+'/memory.S',
+    gadgets+'/control.S',
+    gadgets+'/math.S',
+    gadgets+'/bits.S',
+    gadgets+'/string.S',
+    gadgets+'/misc.S',
+    offsets,
+]
 
 libish_emu = library('ish_emu', emu_src, include_directories: includes)
 
